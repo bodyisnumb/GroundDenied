@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Photon.Pun;
 
 public class Drive : MonoBehaviour
 {
@@ -11,15 +12,31 @@ public class Drive : MonoBehaviour
     [SerializeField] private float _rotationSpeed = 300f;
     private float _moveInput;
 
+    PhotonView view;
+
+
+    private void Start()
+    {
+        view = GetComponent<PhotonView>();
+    }
+
     void Update()
     {
-        _moveInput = Input.GetAxisRaw("Horizontal");
+        if (view.IsMine)
+            {
+                _moveInput = Input.GetAxisRaw("Horizontal");
+            }    
+
     }
 
     private void FixedUpdate()
     {
-        _frontTireRB.AddTorque(-_moveInput * _speed * Time.fixedDeltaTime);
-        _backTireRB.AddTorque(-_moveInput * _speed * Time.fixedDeltaTime);
-        _carRB.AddTorque(-_moveInput * _rotationSpeed * Time.fixedDeltaTime);
+        if (view.IsMine)
+        {
+            _frontTireRB.AddTorque(-_moveInput * _speed * Time.fixedDeltaTime);
+            _backTireRB.AddTorque(-_moveInput * _speed * Time.fixedDeltaTime);
+            _carRB.AddTorque(-_moveInput * _rotationSpeed * Time.fixedDeltaTime);
+        }
+
     }
 }
